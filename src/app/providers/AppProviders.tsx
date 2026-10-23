@@ -38,7 +38,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
     const inAuthGroup = segments[0] === 'auth';
     const inOnboarding = segments[0] === 'onboarding';
-    const inNotFound = segments[0] === '+not-found';
+    const inNotFound = segments[0] === '+not-found' || segments[0] === '_sitemap';
 
     if (!user && !inAuthGroup) {
       router.replace('/auth/welcome');
@@ -51,34 +51,29 @@ function AuthGate({ children }: { children: React.ReactNode }) {
     SplashScreen.hideAsync();
   }, [user, isRestoring, segments, router]);
 
-  if (isRestoring) {
-    return (
-      <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        <SafeAreaProvider>
-          <QueryClientProvider client={queryClient}>
-            <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: theme.colors.background,
-              }}
-            >
-              <ActivityIndicator size="large" color={theme.colors.accent} />
-            </View>
-          </QueryClientProvider>
-        </SafeAreaProvider>
-      </GestureHandlerRootView>
-    );
-  }
-
   return (
     <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
           {children}
+          {isRestoring && (
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.colors.background,
+                zIndex: 999,
+              }}
+            >
+              <ActivityIndicator size="large" color={theme.colors.accent} />
+            </View>
+          )}
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
