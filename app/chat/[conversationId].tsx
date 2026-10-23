@@ -20,7 +20,9 @@ import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useMessages, useSendMessage, useMarkRead } from '@/features/messaging/hooks/useMessaging';
 import { useConversations } from '@/features/messaging/hooks/useMessaging';
+import { useRealtimeMessages } from '@/features/messaging/hooks/useRealtime';
 import { useBlockUser } from '@/features/safety/hooks/useSafety';
+import { useAuthSession } from '@/features/auth/store/auth-session.store';
 import { dayjs } from '@/shared/lib/dayjs';
 import type { Message } from '@/domain/models/message';
 
@@ -33,6 +35,8 @@ export default function ChatScreen() {
   const sendMessage = useSendMessage();
   const markRead = useMarkRead();
   const blockMutation = useBlockUser();
+  const { user } = useAuthSession();
+  useRealtimeMessages(conversationId);
 
   const [text, setText] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -142,7 +146,7 @@ export default function ChatScreen() {
           data={messages}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => {
-            const isOwn = item.senderId === 'user-001';
+            const isOwn = user ? item.senderId === user.id : false;
             const prev = messages[index - 1];
             const showTimestamp = !prev || dayjs(item.createdAt).diff(prev.createdAt, 'hour') > 1;
             return (

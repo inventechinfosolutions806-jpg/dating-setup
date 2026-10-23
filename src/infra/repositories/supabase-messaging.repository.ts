@@ -8,13 +8,28 @@ export class SupabaseMessagingRepository implements MessagingRepository {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return [];
 
-    const { data, error } = await supabase
+    const { data: data1, error: error1 } = await supabase
       .from('conversations')
-      .or(`user1_id.eq.${session.user.id},user2_id.eq.${session.user.id}`)
+      .select('*')
+      .eq('user1_id', session.user.id)
       .order('last_message_at', { ascending: false, nullsFirst: false });
 
-    if (error) throw new Error(error.message);
-    if (!data) return [];
+    const { data: data2, error: error2 } = await supabase
+      .from('conversations')
+      .select('*')
+      .eq('user2_id', session.user.id)
+      .order('last_message_at', { ascending: false, nullsFirst: false });
+
+    if (error1) throw new Error(error1.message);
+    if (error2) throw new Error(error2.message);
+
+    const allConvs = [...(data1 ?? []), ...(data2 ?? [])];
+    const seen = new Set<string>();
+    const data = allConvs.filter((c) => {
+      if (seen.has(c.id)) return false;
+      seen.add(c.id);
+      return true;
+    });
 
     const conversations: Conversation[] = [];
     for (const conv of data) {

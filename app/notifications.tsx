@@ -10,6 +10,7 @@ import { ProfileAvatar } from '@/components/ui/ProfileAvatar';
 import { AppButton } from '@/components/ui/AppButton';
 import { useTheme } from '@/theme/ThemeProvider';
 import { useNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from '@/features/notifications/hooks/useNotifications';
+import { useRealtimeNotifications } from '@/features/messaging/hooks/useRealtime';
 import { dayjs } from '@/shared/lib/dayjs';
 import type { AppNotification, NotificationType } from '@/domain/models/notification';
 
@@ -25,6 +26,7 @@ export default function NotificationsScreen() {
   const { data, isPending, isError, refetch } = useNotifications();
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();
+  useRealtimeNotifications();
 
   const unreadCount = data?.filter((n) => !n.read).length ?? 0;
 

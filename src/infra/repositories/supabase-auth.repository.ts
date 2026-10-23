@@ -3,7 +3,31 @@ import type { CurrentUser } from '@/domain/models/profile';
 import { UnauthorizedError } from '@/domain/errors/domain-error';
 import { supabase } from '@/lib/supabase';
 
-function mapProfileToCurrentUser(profile: Database['public']['Tables']['profiles']['Row'], email: string): CurrentUser {
+interface ProfileRow {
+  id: string;
+  email: string;
+  display_name: string;
+  age: number;
+  bio: string;
+  city: string;
+  region: string;
+  pronouns: string | null;
+  languages: string[];
+  interests: string[];
+  relationship_intent: string;
+  values: string[];
+  lifestyle: string[];
+  communication_style: string;
+  photo_url: string;
+  gallery: string[];
+  profile_completion: number;
+  is_verified: boolean;
+  onboarded: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+function mapProfileToCurrentUser(profile: ProfileRow, email: string): CurrentUser {
   return {
     id: profile.id,
     email,

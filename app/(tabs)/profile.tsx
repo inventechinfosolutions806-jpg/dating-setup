@@ -166,7 +166,7 @@ export default function ProfileScreen() {
         </View>
 
         <AppText size="xs" color={theme.colors.textMuted} align="center" style={{ marginTop: 24 }}>
-          MIRROR - Friendship first. Chemistry follows.{'\n'}Demo mode - no real backend connected.
+          MIRROR - Friendship first. Chemistry follows.
         </AppText>
       </ScrollView>
     </ScreenContainer>
