@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { useAuthSession } from '@/features/auth/store/auth-session.store';
 import { authService } from '@/features/auth/services/auth.service';
+import { useAuthStateListener } from '@/features/messaging/hooks/useRealtime';
 import { useRouter, useSegments, SplashScreen } from 'expo-router';
 
 function AuthGate({ children }: { children: React.ReactNode }) {
@@ -15,6 +16,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const { user, isRestoring, setUser, setRestoring } = useAuthSession();
   const router = useRouter();
   const segments = useSegments();
+  useAuthStateListener();
 
   useEffect(() => {
     (async () => {

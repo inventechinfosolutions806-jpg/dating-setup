@@ -1,6 +1,6 @@
-export type DataSourceMode = 'mock' | 'http';
+export type DataSourceMode = 'mock' | 'http' | 'supabase';
 
-export const DATA_SOURCE: DataSourceMode = 'mock';
+export const DATA_SOURCE: DataSourceMode = 'supabase';
 
 export const API_URL: string | undefined = undefined;
 

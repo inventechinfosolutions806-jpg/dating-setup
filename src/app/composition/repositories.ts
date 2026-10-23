@@ -20,6 +20,11 @@ import { MockSubscriptionRepository } from '@/mocks/repositories/mock-subscripti
 import { MockSafetyRepository } from '@/mocks/repositories/mock-safety.repository';
 import { MockAuthRepository } from '@/mocks/repositories/mock-auth.repository';
 
+import { SupabaseAuthRepository } from '@/infra/repositories/supabase-auth.repository';
+import { SupabaseMessagingRepository } from '@/infra/repositories/supabase-messaging.repository';
+import { SupabaseNotificationRepository } from '@/infra/repositories/supabase-notification.repository';
+import { SupabaseSafetyRepository } from '@/infra/repositories/supabase-safety.repository';
+
 import { DATA_SOURCE } from '@/config/data-source';
 
 const mockDiscovery = new MockDiscoveryRepository();
@@ -31,6 +36,11 @@ const mockNotification = new MockNotificationRepository();
 const mockSubscription = new MockSubscriptionRepository();
 const mockSafety = new MockSafetyRepository();
 const mockAuth = new MockAuthRepository();
+
+const supabaseAuth = new SupabaseAuthRepository();
+const supabaseMessaging = new SupabaseMessagingRepository();
+const supabaseNotification = new SupabaseNotificationRepository();
+const supabaseSafety = new SupabaseSafetyRepository();
 
 interface RepositoryMap {
   discovery: DiscoveryRepository;
@@ -44,22 +54,16 @@ interface RepositoryMap {
   auth: AuthRepository;
 }
 
-export const repositories: RepositoryMap = (() => {
-  if (DATA_SOURCE === 'http') {
-    throw new Error(
-      'HTTP repository implementations are not yet configured. Set DATA_SOURCE to "mock" in src/config/data-source.ts until the NestJS backend is ready.',
-    );
-  }
+const useSupabase = DATA_SOURCE === 'supabase';
 
-  return {
-    discovery: mockDiscovery,
-    introduction: mockIntroduction,
-    connection: mockConnection,
-    activity: mockActivity,
-    messaging: mockMessaging,
-    notification: mockNotification,
-    subscription: mockSubscription,
-    safety: mockSafety,
-    auth: mockAuth,
-  };
-})();
+export const repositories: RepositoryMap = {
+  discovery: mockDiscovery,
+  introduction: mockIntroduction,
+  connection: mockConnection,
+  activity: mockActivity,
+  messaging: useSupabase ? supabaseMessaging : mockMessaging,
+  notification: useSupabase ? supabaseNotification : mockNotification,
+  subscription: mockSubscription,
+  safety: useSupabase ? supabaseSafety : mockSafety,
+  auth: useSupabase ? supabaseAuth : mockAuth,
+};
