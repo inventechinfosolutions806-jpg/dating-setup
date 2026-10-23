@@ -38,7 +38,7 @@ function AuthGate({ children }: { children: React.ReactNode }) {
 
     const inAuthGroup = segments[0] === 'auth';
     const inOnboarding = segments[0] === 'onboarding';
-    const inNotFound = segments[0] === '+not-found' || segments[0] === undefined;
+    const inNotFound = segments[0] === '+not-found';
 
     if (!user && !inAuthGroup) {
       router.replace('/auth/welcome');
@@ -48,25 +48,18 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       router.replace('/(tabs)');
     }
 
-    if (!isRestoring) {
-      SplashScreen.hideAsync();
-    }
+    SplashScreen.hideAsync();
   }, [user, isRestoring, segments, router]);
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
-          {children}
-          {isRestoring && (
+  if (isRestoring) {
+    return (
+      <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <SafeAreaProvider>
+          <QueryClientProvider client={queryClient}>
+            <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
             <View
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
+                flex: 1,
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: theme.colors.background,
@@ -74,7 +67,18 @@ function AuthGate({ children }: { children: React.ReactNode }) {
             >
               <ActivityIndicator size="large" color={theme.colors.accent} />
             </View>
-          )}
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
+    );
+  }
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1, backgroundColor: theme.colors.background }}>
+      <SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+          <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
+          {children}
         </QueryClientProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
